@@ -91,7 +91,7 @@ export const AboutSection = () => {
         <div className="absolute top-3/4 right-1/6 w-4 h-4 bg-[#FCDC00]/15 rotate-45 animate-ping" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      <div className="container relative z-10 px-4 mx-auto">
+      <div className="container relative z-10 lg:px-16 px-4 mx-auto">
         <div className={`mb-16 text-center transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-semibold rounded-full bg-[#FCDC00]/10 border border-[#FCDC00]/20 backdrop-blur-sm">
             <Lightbulb className="w-4 h-4 mr-2 text-[#FCDC00]" />

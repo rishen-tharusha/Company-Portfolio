@@ -139,7 +139,7 @@ export const ServicesSection = () => {
         </div>
       </div>
 
-      <div className="container relative z-10 px-4 mx-auto">
+      <div className="container relative z-10 lg:px-16 px-4 mx-auto">
         <div className={`text-center mb-16 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-semibold rounded-full bg-[#FCDC00]/10 border border-[#FCDC00]/20 backdrop-blur-sm">
             <Sparkles className="w-4 h-4 mr-2 text-[#FCDC00]" />

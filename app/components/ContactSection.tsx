@@ -47,7 +47,7 @@ export const ContactSection = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: ["+39 328 712 7470", "+94 76 921 1122"],
+      details: ["+39 328 712 7470", "+94 74 386 3721"],
       gradient: "from-blue-500 to-cyan-500"
     },
     {
@@ -66,7 +66,7 @@ export const ContactSection = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-linear-to-r from-[#FCDC00]/5 to-[#1A304F]/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container relative px-4 mx-auto">
+      <div className="container relative lg:px-16 px-4 mx-auto">
         <div className="mb-20 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FCDC00]/20 rounded-full mb-6">
             <Sparkles size={20} className="text-[#1A304F]" />
@@ -177,7 +177,7 @@ export const ContactSection = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group relative px-8 py-4 bg-linear-to-r from-[#1A304F] to-[#1A304F]/90 text-white rounded-2xl font-semibold hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-3"
+                    className="group relative px-8 py-4 bg-linear-to-r from-[#1A304F] to-[#1A304F]/90 text-white rounded-2xl font-semibold hover:shadow-xl transform hover:-translate-y-1 hover:cursor-pointer transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-3"
                   >
                     <div className="absolute inset-0 bg-linear-to-r from-[#FCDC00] to-[#FCDC00]/80 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <span className="relative z-10 group-hover:text-[#1A304F] transition-colors duration-300">

@@ -127,7 +127,7 @@ export const PortfolioSection = () => {
         </div>
       </div>
 
-      <div className="container relative z-10 px-4 mx-auto">
+      <div className="container relative lg:px-16 z-10 px-4 mx-auto">
         <div className={`mb-16 text-center transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-semibold rounded-full bg-[#FCDC00]/10 border border-[#FCDC00]/20 backdrop-blur-sm">
             <Sparkles className="w-4 h-4 mr-2 text-[#FCDC00]" />
@@ -183,14 +183,7 @@ export const PortfolioSection = () => {
 
                 <div className="absolute inset-0 bg-linear-to-t from-[#1A304F]/95 via-[#1A304F]/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 
-                <div className="absolute flex gap-2 transition-all duration-300 transform translate-y-2 opacity-0 top-4 right-4 group-hover:opacity-100 group-hover:translate-y-0">
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-[#FCDC00] hover:text-[#1A304F] transition-colors cursor-pointer">
-                    <Eye className="w-4 h-4" />
-                  </div>
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-[#FCDC00] hover:text-[#1A304F] transition-colors cursor-pointer">
-                    <Code className="w-4 h-4" />
-                  </div>
-                </div>
+                
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white transition-all duration-500 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
