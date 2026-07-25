@@ -1,204 +1,162 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { CheckCircle, TrendingUp, Users, Zap, Code, Lightbulb, Target, Award } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Award, CheckCircle, Code, Lightbulb, Target, TrendingUp, Users, Zap } from 'lucide-react';
+
+const FEATURES = [
+  { icon: CheckCircle, text: 'Agile Methodology', delay: 'delay-0' },
+  { icon: Code, text: 'Clean Code', delay: 'delay-100' },
+  { icon: Target, text: 'Continuous Integration', delay: 'delay-200' },
+  { icon: Users, text: 'Client-First Approach', delay: 'delay-300' },
+];
+
+const CARD_VARIANTS = {
+  dark: {
+    card: 'bg-linear-to-br from-[#1A304F] to-[#0F1F35] border-white/10',
+    title: 'text-white',
+    body: 'text-slate-300',
+    iconWrap: 'bg-[#FCDC00]/15 text-[#FCDC00]',
+  },
+  light: {
+    card: 'bg-white border-gray-100',
+    title: 'text-[#1A304F]',
+    body: 'text-gray-600',
+    iconWrap: 'bg-[#1A304F]/5 text-[#1A304F]',
+  },
+  accent: {
+    card: 'bg-linear-to-br from-[#FCDC00] to-yellow-300 border-transparent',
+    title: 'text-[#1A304F]',
+    body: 'text-[#1A304F]/80',
+    iconWrap: 'bg-white/40 text-[#1A304F]',
+  },
+} as const;
+
+const CARDS = [
+  { icon: Zap, title: 'Innovative', description: 'Pushing boundaries with cutting-edge solutions', variant: 'dark' },
+  { icon: TrendingUp, title: 'Scalable', description: 'Solutions that grow with your business', variant: 'light' },
+  { icon: Users, title: 'Collaborative', description: 'Working together to achieve excellence', variant: 'light' },
+  { icon: Award, title: 'Reliable', description: 'Committed to quality and on-time delivery', variant: 'accent' },
+] as const;
+
+const hexClip = '[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]';
 
 export const AboutSection = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeCard, setActiveCard] = useState(null);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
+      ([entry]) => entry.isIntersecting && setIsVisible(true),
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
+    observer.observe(el);
+    return () => observer.unobserve(el);
   }, []);
 
-  const features = [
-    { icon: CheckCircle, text: "Agile Methodology", delay: "0s" },
-    { icon: Code, text: "Clean Code", delay: "0.1s" },
-    { icon: Target, text: "Continuous Integration", delay: "0.2s" },
-    { icon: Users, text: "Client-First Approach", delay: "0.3s" }
-  ];
-
-  const cards = [
-    {
-      id: 1,
-      icon: Zap,
-      title: "Innovative",
-      description: "Pushing boundaries with cutting-edge solutions",
-      bgColor: "bg-gradient-to-br from-[#1A304F] to-[#0F1F35]",
-      textColor: "text-white",
-      iconColor: "text-[#FCDC00]",
-      glow: "shadow-[#1A304F]/30"
-    },
-    {
-      id: 2,
-      icon: TrendingUp,
-      title: "Scalable",
-      description: "Solutions that grow with your business",
-      bgColor: "bg-gradient-to-br from-white to-gray-50",
-      textColor: "text-[#1A304F]",
-      iconColor: "text-[#1A304F]",
-      glow: "shadow-gray-200"
-    },
-    {
-      id: 3,
-      icon: Users,
-      title: "Collaborative",
-      description: "Working together to achieve excellence",
-      bgColor: "bg-gradient-to-br from-white to-gray-50",
-      textColor: "text-[#1A304F]",
-      iconColor: "text-[#1A304F]",
-      glow: "shadow-gray-200"
-    },
-    {
-      id: 4,
-      icon: Award,
-      title: "Reliable",
-      description: "Committed to quality and on-time delivery",
-      bgColor: "bg-gradient-to-br from-[#FCDC00] to-yellow-300",
-      textColor: "text-[#1A304F]",
-      iconColor: "text-[#1A304F]",
-      glow: "shadow-[#FCDC00]/30"
-    }
-  ];
+  const enterClass = (delay = '', axis: 'x' | 'y' = 'y', reverse = false) => {
+    const hidden = axis === 'y' ? 'translate-y-10' : reverse ? 'translate-x-10' : '-translate-x-10';
+    return `transition-all duration-700 ${delay} ${
+      isVisible ? 'translate-x-0 translate-y-0 opacity-100' : `${hidden} opacity-0`
+    }`;
+  };
 
   return (
-    <section ref={sectionRef} id="about" className="relative py-20 overflow-hidden bg-linear-to-b from-white via-gray-50/30 to-white">
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-[#FCDC00]/5 blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-[#1A304F]/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full bg-[#FCDC00]/3 blur-xl animate-pulse" style={{ animationDelay: '4s' }}></div>
-        
-        <div className="absolute top-1/4 right-1/4 w-3 h-3 bg-[#FCDC00]/20 rotate-45 animate-ping"></div>
-        <div className="absolute bottom-1/3 left-1/5 w-2 h-2 bg-[#1A304F]/20 rounded-full animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/6 w-4 h-4 bg-[#FCDC00]/15 rotate-45 animate-ping" style={{ animationDelay: '1s' }}></div>
-      </div>
+    <section ref={sectionRef} id="about" className="relative overflow-hidden bg-linear-to-b from-white via-gray-50/40 to-white py-20 sm:py-28">
+      {/* Hex grid backdrop, echoes the hero */}
+      <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full text-[#1A304F] opacity-[0.04]">
+        <defs>
+          <pattern id="hex-grid-about" width="49.6" height="43.4" patternUnits="userSpaceOnUse">
+            <polygon
+              points="24.8,0 49.6,14.4 49.6,28.9 24.8,43.4 0,28.9 0,14.4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hex-grid-about)" />
+      </svg>
 
-      <div className="container relative z-10 lg:px-16 px-4 mx-auto">
-        <div className={`mb-16 text-center transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-semibold rounded-full bg-[#FCDC00]/10 border border-[#FCDC00]/20 backdrop-blur-sm">
-            <Lightbulb className="w-4 h-4 mr-2 text-[#FCDC00]" />
-            <span className="text-[#1A304F]">Our Story</span>
-          </div>
-          
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1A304F] mb-4 relative">
-            About <span className="relative">
-              <span className="text-[#FCDC00] relative z-10">HexCoders</span>
-              <div className="absolute -bottom-1 left-0 right-0 h-3 bg-[#FCDC00]/20 blur-sm"></div>
+      <div className="pointer-events-none absolute left-10 top-16 h-40 w-40 rounded-full bg-[#FCDC00]/10 blur-3xl motion-safe:animate-pulse" />
+      <div
+        className="pointer-events-none absolute bottom-16 right-10 h-48 w-48 rounded-full bg-[#1A304F]/5 blur-3xl motion-safe:animate-pulse"
+        style={{ animationDelay: '1.5s' }}
+      />
+
+      <div className="container relative z-10 mx-auto px-4 lg:px-8">
+        {/* Header */}
+        <div className={`mb-16 text-center ${enterClass()}`}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#FCDC00]/30 bg-[#FCDC00]/10 px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-[#1A304F]">
+            <Lightbulb className="h-3.5 w-3.5 text-[#FCDC00]" aria-hidden />
+            Our Story
+          </span>
+
+          <h2 className="mt-6 text-3xl font-bold text-[#1A304F] sm:text-4xl lg:text-5xl">
+            About{' '}
+            <span className="relative whitespace-nowrap text-[#FCDC00]">
+              HexCoders
+              <svg aria-hidden viewBox="0 0 200 12" className="absolute -bottom-1 left-0 w-full text-[#FCDC00]/40">
+                <path d="M0 8 Q50 0 100 6 T200 4" stroke="currentColor" strokeWidth="4" fill="none" />
+              </svg>
             </span>
-            <div className="absolute -top-4 -right-4 text-[#FCDC00] animate-bounce">
-              <div className="w-3 h-3 bg-[#FCDC00] rounded-full"></div>
-            </div>
           </h2>
-          
-          <div className="relative mx-auto w-20 h-1 bg-linear-to-r from-[#FCDC00] to-yellow-300 rounded-full">
-            <div className="absolute inset-0 bg-linear-to-r from-[#FCDC00] to-yellow-300 rounded-full animate-pulse"></div>
-          </div>
+
+          <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-linear-to-r from-[#FCDC00] to-yellow-300" />
         </div>
 
-        <div className="flex flex-col items-center gap-12 lg:flex-row">
-          <div className={`lg:w-1/2 transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
-            <div className="relative">
-              <h3 className="text-2xl md:text-3xl font-bold text-[#1A304F] mb-6 relative">
-                Your Vision, Our Code
-                <div className="absolute -bottom-2 left-0 w-16 h-1 bg-[#FCDC00] rounded-full"></div>
-              </h3>
-              
-              <div className="mb-8 space-y-6">
-                <div className="relative p-6 border border-gray-100 shadow-lg bg-white/60 backdrop-blur-sm rounded-2xl">
-                  <p className="leading-relaxed text-gray-700">
-                    Founded in 2025, HexCoders has been at the forefront of software
-                    development innovation. We're a team of passionate developers,
-                    designers, and strategists dedicated to creating exceptional
-                    digital experiences that solve real-world problems.
-                  </p>
-                  <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-[#FCDC00] to-transparent rounded-l-2xl"></div>
-                </div>
-                
-                <div className="relative p-6 border border-gray-100 shadow-lg bg-white/60 backdrop-blur-sm rounded-2xl">
-                  <p className="leading-relaxed text-gray-700">
-                    Our approach combines technical excellence with creative thinking
-                    to deliver solutions that not only meet your current needs but are
-                    built to evolve with your business.
-                  </p>
-                  <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-[#1A304F] to-transparent rounded-l-2xl"></div>
-                </div>
-              </div>
+        <div className="flex flex-col gap-12 lg:flex-row lg:items-start">
+          {/* Story + features */}
+          <div className={`lg:w-1/2 ${enterClass('delay-200', 'x')}`}>
+            <h3 className="relative mb-6 text-2xl font-bold text-[#1A304F] sm:text-3xl">
+              Your Vision, Our Code
+              <span className="absolute -bottom-2 left-0 h-1 w-16 rounded-full bg-[#FCDC00]" />
+            </h3>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <div
-                      key={index}
-                      className={`group flex items-start p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-100 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}
-                      style={{ transitionDelay: feature.delay }}
-                    >
-                      <div className="shrink-0 w-10 h-10 bg-[#FCDC00]/20 rounded-full flex items-center justify-center mr-3 group-hover:bg-[#FCDC00]/30 transition-colors">
-                        <Icon className="text-[#FCDC00] group-hover:scale-110 transition-transform" size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-gray-700 font-medium group-hover:text-[#1A304F] transition-colors">
-                          {feature.text}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="mb-8 space-y-4">
+              <p className="rounded-2xl border-l-4 border-[#FCDC00] bg-white/70 p-6 leading-relaxed text-gray-700 shadow-sm">
+                Founded in 2025, HexCoders has been at the forefront of software development innovation. We're a team of passionate developers, designers, and strategists dedicated to creating exceptional digital experiences.
+              </p>
+              <p className="rounded-2xl border-l-4 border-[#1A304F] bg-white/70 p-6 leading-relaxed text-gray-700 shadow-sm">
+                Our approach combines technical excellence with creative thinking to deliver solutions that meet your current needs and are built to evolve with your business.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {FEATURES.map(({ icon: Icon, text, delay }) => (
+                <div
+                  key={text}
+                  className={`group flex items-center gap-3 rounded-xl border border-gray-100 bg-white/80 p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${delay} ${enterClass()}`}
+                >
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center bg-[#FCDC00]/15 text-[#FCDC00] ${hexClip}`}>
+                    <Icon size={18} />
+                  </div>
+                  <span className="font-medium text-gray-700 transition-colors group-hover:text-[#1A304F]">
+                    {text}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className={`lg:w-1/2 transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
+          {/* Value cards */}
+          <div className={`lg:w-1/2 ${enterClass('delay-300', 'x', true)}`}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {cards.map((card, index) => {
-                const Icon = card.icon;
+              {CARDS.map(({ icon: Icon, title, description, variant }) => {
+                const v = CARD_VARIANTS[variant];
                 return (
                   <div
-                    key={card.id}
-                    className={`group relative p-8 ${card.bgColor} rounded-2xl border border-white/20 shadow-xl hover:shadow-2xl hover:${card.glow} transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-rotate-1 ${activeCard === card.id ? 'scale-105 -rotate-1' : ''}`}
-                    
-                    onMouseLeave={() => setActiveCard(null)}
-                    style={{ 
-                      animationDelay: `${index * 0.1}s`,
-                      transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)'
-                    }}
+                    key={title}
+                    className={`rounded-2xl border p-8 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${v.card}`}
                   >
-                    <div className="absolute inset-0 transition-opacity duration-500 opacity-0 rounded-2xl bg-linear-to-r from-transparent via-white/5 to-transparent group-hover:opacity-100"></div>
-                    
-                    <div className={`inline-flex items-center justify-center w-16 h-16 mb-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                      <Icon className={`${card.iconColor} group-hover:animate-pulse`} size={32} />
+                    <div className={`mb-4 flex h-14 w-14 items-center justify-center bg-white/10 ${v.iconWrap} ${hexClip}`}>
+                      <Icon size={28} />
                     </div>
-                    
-                    <h4 className={`text-xl font-bold ${card.textColor} mb-3 group-hover:scale-105 transition-transform`}>
-                      {card.title}
-                    </h4>
-                    
-                    <p className={`${card.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'} leading-relaxed group-hover:${card.textColor} transition-colors`}>
-                      {card.description}
-                    </p>
-
-                    <div className="absolute w-2 h-2 rounded-full top-4 right-4 bg-white/20 animate-ping"></div>
-                    <div className="absolute w-1 h-1 rounded-full bottom-4 left-4 bg-white/30 animate-pulse"></div>
-                    
-                    <div className="absolute inset-0 transition-all duration-300 opacity-0 pointer-events-none rounded-2xl bg-linear-to-br from-transparent via-white/5 to-white/10 group-hover:opacity-100"></div>
+                    <h4 className={`mb-2 text-xl font-bold ${v.title}`}>{title}</h4>
+                    <p className={`leading-relaxed ${v.body}`}>{description}</p>
                   </div>
                 );
               })}

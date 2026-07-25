@@ -1,252 +1,231 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { MapPin, Phone, Mail, Send, Sparkles, MessageCircle, Clock } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Clock, Mail, MapPin, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
 import emailjs from "@emailjs/browser";
-import { SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY } from '../config/Constants';
+import { PUBLIC_KEY, SERVICE_ID, TEMPLATE_ID } from "../config/Constants";
+
+const FIELDS = [
+  { name: "name", label: "Your Name", type: "text", placeholder: "John Doe", required: true },
+  { name: "email", label: "Your Email", type: "email", placeholder: "john@example.com", required: true },
+  { name: "subject", label: "Subject", type: "text", placeholder: "Project Inquiry", required: false },
+] as const;
+
+const CONTACT_INFO = [
+  { icon: MapPin, title: "Our Locations", details: ["Primary Location: Italy", "Development Center: Sri Lanka"] },
+  { icon: Phone, title: "Call Us", details: ["+39 328 712 7470", "+94 74 386 3721"] },
+  { icon: Mail, title: "Email Us", details: ["info.hexcoders@gmail.com"] },
+];
+
+const hexClip = "[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]";
+
+const inputClass =
+  "w-full rounded-2xl border-2 border-gray-200 bg-white/50 px-6 py-4 placeholder-gray-400 backdrop-blur-sm transition-all duration-300 hover:border-gray-300 focus:-translate-y-1 focus:border-[#FCDC00] focus:shadow-lg focus:outline-none";
 
 export const ContactSection = () => {
   const form = useRef<HTMLFormElement | null>(null);
-  const [isSent, setIsSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (status === "idle") return;
+    const timer = setTimeout(() => setStatus("idle"), 6000);
+    return () => clearTimeout(timer);
+  }, [status]);
+
+  const sendEmail = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-
     if (!form.current) return;
 
-    emailjs
-      .sendForm(
-        SERVICE_ID, 
-        TEMPLATE_ID,  
-        form.current,
-        PUBLIC_KEY    
-      )
-      .then(
-        () => {
-          setIsSent(true);
-          setLoading(false);
-          form.current?.reset();
-        },
-        (error) => {
-          console.error("FAILED...", error);
-          setLoading(false);
-        }
-      );
+    setLoading(true);
+    setStatus("idle");
+
+    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY).then(
+      () => {
+        setStatus("success");
+        setLoading(false);
+        form.current?.reset();
+      },
+      (error) => {
+        console.error("Failed to send message:", error);
+        setStatus("error");
+        setLoading(false);
+      }
+    );
   };
 
-  const contactInfo = [
-    {
-      icon: MapPin,
-      title: "Our Locations",
-      details: ["Primary Location: Italy", "Development Center: Sri Lanka"],
-      gradient: "from-purple-500 to-pink-500"
-    },
-    {
-      icon: Phone,
-      title: "Call Us",
-      details: ["+39 328 712 7470", "+94 74 386 3721"],
-      gradient: "from-blue-500 to-cyan-500"
-    },
-    {
-      icon: Mail,
-      title: "Email Us",
-      details: ["info.hexcoders@gmail.com"],
-      gradient: "from-green-500 to-teal-500"
-    }
-  ];
-
   return (
-    <section id="contact" className="relative py-20 overflow-hidden bg-linear-to-br from-gray-50 via-white to-gray-100">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FCDC00]/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#1A304F]/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-linear-to-r from-[#FCDC00]/5 to-[#1A304F]/5 rounded-full blur-3xl"></div>
-      </div>
+    <section id="contact" className="relative overflow-hidden bg-linear-to-b from-gray-50 via-white to-gray-100 py-20 sm:py-28">
+      {/* Hex grid backdrop, consistent with the rest of the page */}
+      <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full text-[#1A304F] opacity-[0.04]">
+        <defs>
+          <pattern id="hex-grid-contact" width="49.6" height="43.4" patternUnits="userSpaceOnUse">
+            <polygon
+              points="24.8,0 49.6,14.4 49.6,28.9 24.8,43.4 0,28.9 0,14.4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hex-grid-contact)" />
+      </svg>
 
-      <div className="container relative lg:px-16 px-4 mx-auto">
-        <div className="mb-20 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FCDC00]/20 rounded-full mb-6">
-            <Sparkles size={20} className="text-[#1A304F]" />
-            <span className="text-[#1A304F] font-medium">Let's Connect</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-bold text-[#1A304F] mb-6 leading-tight">
-            Get In <span className="text-[#FCDC00] relative inline-block">
+      <div className="pointer-events-none absolute -right-40 -top-40 h-80 w-80 rounded-full bg-[#FCDC00]/10 blur-3xl motion-safe:animate-pulse" />
+      <div
+        className="pointer-events-none absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-[#1A304F]/10 blur-3xl motion-safe:animate-pulse"
+        style={{ animationDelay: "1.5s" }}
+      />
+
+      <div className="container relative z-10 mx-auto px-4 lg:px-8">
+        {/* Header */}
+        <div className="mx-auto mb-16 max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#FCDC00]/30 bg-[#FCDC00]/10 px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-[#1A304F]">
+            <Sparkles className="h-3.5 w-3.5 text-[#FCDC00]" aria-hidden />
+            Let's Connect
+          </span>
+
+          <h2 className="mt-6 text-3xl font-bold text-[#1A304F] sm:text-4xl lg:text-5xl">
+            Get In{" "}
+            <span className="relative whitespace-nowrap text-[#FCDC00]">
               Touch
-              <svg className="absolute left-0 w-full h-3 -bottom-2" viewBox="0 0 100 12" fill="none">
-                <path d="M2 10c20-3 40-3 96 0" stroke="#FCDC00" strokeWidth="4" strokeLinecap="round"/>
+              <svg aria-hidden viewBox="0 0 200 12" className="absolute -bottom-1 left-0 w-full text-[#FCDC00]/40">
+                <path d="M0 8 Q50 0 100 6 T200 4" stroke="currentColor" strokeWidth="4" fill="none" />
               </svg>
             </span>
           </h2>
-          <p className="max-w-3xl mx-auto text-lg leading-relaxed text-gray-600">
-            Have a project in mind? We'd love to hear from you. Reach out to us
-            and let's create something <span className="font-semibold text-[#1A304F]">amazing</span> together.
+
+          <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-linear-to-r from-[#FCDC00] to-yellow-300" />
+
+          <p className="mt-6 leading-relaxed text-gray-600 sm:text-lg">
+            Have a project in mind? We'd love to hear from you — let's create something amazing together.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Form */}
           <div className="lg:col-span-7">
-            <div className="relative p-8 transition-all duration-500 border shadow-xl md:p-12 bg-white/80 backdrop-blur-sm rounded-3xl border-white/50 hover:shadow-2xl">
-              <div className="absolute -top-6 left-8">
-                <div className="flex items-center gap-2 px-4 py-2 bg-[#1A304F] text-white rounded-full shadow-lg">
-                  <MessageCircle size={18} />
-                  <span className="font-medium">Send Message</span>
-                </div>
+            <div className="relative rounded-3xl border border-white/50 bg-white/80 p-6 shadow-xl backdrop-blur-sm sm:p-8 md:p-12">
+              <div className="absolute -top-5 left-6 flex items-center gap-2 rounded-full bg-[#1A304F] px-4 py-2 text-white shadow-lg sm:-top-6">
+                <MessageCircle size={18} />
+                <span className="font-medium">Send Message</span>
               </div>
 
-              <form ref={form} onSubmit={sendEmail} className="mt-6">
-                <div className="grid grid-cols-1 gap-8 mb-8 md:grid-cols-2">
-                  <div className="relative">
-                    <label className="block mb-3 text-sm font-semibold tracking-wide text-gray-700 uppercase">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      onFocus={() => setFocusedField('name')}
-                      onBlur={() => setFocusedField(null)}
-                      className={`w-full px-6 py-4 border-2 rounded-2xl bg-white/50 backdrop-blur-sm transition-all duration-300 placeholder-gray-400 ${
-                        focusedField === 'name' 
-                          ? 'border-[#FCDC00] shadow-lg transform -translate-y-1' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div className="relative">
-                    <label className="block mb-3 text-sm font-semibold tracking-wide text-gray-700 uppercase">
-                      Your Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField(null)}
-                      className={`w-full px-6 py-4 border-2 rounded-2xl bg-white/50 backdrop-blur-sm transition-all duration-300 placeholder-gray-400 ${
-                        focusedField === 'email' 
-                          ? 'border-[#FCDC00] shadow-lg transform -translate-y-1' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="john@example.com"
-                    />
-                  </div>
+              <form ref={form} onSubmit={sendEmail} className="mt-8 sm:mt-6">
+                <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {FIELDS.slice(0, 2).map(({ name, label, type, placeholder, required }) => (
+                    <div key={name}>
+                      <label htmlFor={name} className="mb-3 block text-sm font-semibold uppercase tracking-wide text-gray-700">
+                        {label}
+                      </label>
+                      <input id={name} name={name} type={type} required={required} placeholder={placeholder} className={inputClass} />
+                    </div>
+                  ))}
                 </div>
 
                 <div className="mb-8">
-                  <label className="block mb-3 text-sm font-semibold tracking-wide text-gray-700 uppercase">
+                  <label htmlFor="subject" className="mb-3 block text-sm font-semibold uppercase tracking-wide text-gray-700">
                     Subject
                   </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    onFocus={() => setFocusedField('subject')}
-                    onBlur={() => setFocusedField(null)}
-                    className={`w-full px-6 py-4 border-2 rounded-2xl bg-white/50 backdrop-blur-sm transition-all duration-300 placeholder-gray-400 ${
-                      focusedField === 'subject' 
-                        ? 'border-[#FCDC00] shadow-lg transform -translate-y-1' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    placeholder="Project Inquiry"
-                  />
+                  <input id="subject" name="subject" type="text" placeholder="Project Inquiry" className={inputClass} />
                 </div>
 
                 <div className="mb-8">
-                  <label className="block mb-3 text-sm font-semibold tracking-wide text-gray-700 uppercase">
+                  <label htmlFor="message" className="mb-3 block text-sm font-semibold uppercase tracking-wide text-gray-700">
                     Your Message
                   </label>
                   <textarea
+                    id="message"
                     name="message"
                     rows={6}
                     required
-                    onFocus={() => setFocusedField('message')}
-                    onBlur={() => setFocusedField(null)}
-                    className={`w-full px-6 py-4 border-2 rounded-2xl bg-white/50 backdrop-blur-sm transition-all duration-300 placeholder-gray-400 resize-none ${
-                      focusedField === 'message' 
-                        ? 'border-[#FCDC00] shadow-lg transform -translate-y-1' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
                     placeholder="Tell us about your project and how we can help bring your vision to life..."
+                    className={`${inputClass} resize-none`}
                   />
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group relative px-8 py-4 bg-linear-to-r from-[#1A304F] to-[#1A304F]/90 text-white rounded-2xl font-semibold hover:shadow-xl transform hover:-translate-y-1 hover:cursor-pointer transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-3"
+                    className="group relative flex items-center cursor-pointer gap-3 overflow-hidden rounded-2xl bg-linear-to-r from-[#1A304F] to-[#1A304F]/90 px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    <div className="absolute inset-0 bg-linear-to-r from-[#FCDC00] to-[#FCDC00]/80 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                    <span className="relative z-10 group-hover:text-[#1A304F] transition-colors duration-300">
+                    <div className="absolute inset-0 translate-y-full bg-linear-to-r from-[#FCDC00] to-[#FCDC00]/80 transition-transform duration-300 group-hover:translate-y-0" />
+                    <span className="relative z-10 transition-colors duration-300 group-hover:text-[#1A304F]">
                       {loading ? "Sending..." : "Send Message"}
                     </span>
-                    <Send size={18} className="relative z-10 group-hover:text-[#1A304F] transition-colors duration-300" />
+                    <Send size={18} className="relative z-10 transition-colors duration-300 group-hover:text-[#1A304F]" />
                   </button>
 
-                  {isSent && (
-                    <div className="flex items-center gap-2 px-4 py-2 text-green-700 bg-green-100 rounded-full animate-bounce">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="font-medium">Message sent successfully!</span>
-                    </div>
-                  )}
+                  <div aria-live="polite">
+                    {status === "success" && (
+                      <div className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700">
+                        <span className="h-2 w-2 rounded-full bg-green-500" />
+                        <span className="text-sm font-medium">Message sent successfully!</span>
+                      </div>
+                    )}
+                    {status === "error" && (
+                      <div className="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-red-700">
+                        <span className="h-2 w-2 rounded-full bg-red-500" />
+                        <span className="text-sm font-medium">Something went wrong — please try again.</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </form>
             </div>
           </div>
 
+          {/* Contact info */}
           <div className="lg:col-span-5">
-            <div className="sticky top-8">
-              <div className="relative p-8 md:p-10 bg-linear-to-br from-[#1A304F] via-[#1A304F]/95 to-[#1A304F]/90 text-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#FCDC00]/20 rounded-full blur-2xl"></div>
-                <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#FCDC00]/20 rounded-full blur-2xl"></div>
-                
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 bg-[#FCDC00] rounded-2xl">
-                      <Clock size={24} className="text-[#1A304F]" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold">Contact Information</h3>
-                      <p className="text-white/80">We're here to help 24/7</p>
-                    </div>
-                  </div>
+            <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#1A304F] via-[#1A304F]/95 to-[#1A304F]/90 p-6 text-white shadow-xl sm:p-8 md:p-10 lg:sticky lg:top-8">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[#FCDC00]/20 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#FCDC00]/20 blur-2xl" />
 
-                  <div className="space-y-8">
-                    {contactInfo.map((item, index) => (
-                      <div key={index} className="relative group">
-                        <div className="flex items-start gap-6 p-6 transition-all duration-300 border bg-white/10 backdrop-blur-sm rounded-2xl border-white/20 hover:bg-white/20 hover:transform hover:scale-105">
-                          <div className={`p-4 bg-linear-to-r ${item.gradient} rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300`}>
-                            <item.icon size={28} className="text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-xl font-bold mb-3 text-white group-hover:text-[#FCDC00] transition-colors duration-300">
-                              {item.title}
-                            </h4>
-                            <div className="space-y-2">
-                              {item.details.map((detail, detailIndex) => (
-                                <p key={detailIndex} className="transition-colors duration-200 text-white/90 hover:text-white">
-                                  {detail}
-                                </p>
-                              ))}
-                            </div>
-                          </div>
+              <div className="relative z-10">
+                <div className="mb-8 flex items-center gap-3">
+                  <div className="rounded-2xl bg-[#FCDC00] p-3">
+                    <Clock size={24} className="text-[#1A304F]" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold sm:text-2xl">Contact Information</h3>
+                    <p className="text-white/80">We're here to help 24/7</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {CONTACT_INFO.map(({ icon: Icon, title, details }) => (
+                    <div
+                      key={title}
+                      className="group flex items-start gap-5 rounded-2xl border border-white/20 bg-white/10 p-5 transition-all duration-300 hover:bg-white/20"
+                    >
+                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center bg-white/10 text-[#FCDC00] ${hexClip}`}>
+                        <Icon size={24} />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="mb-2 text-lg font-bold text-white transition-colors group-hover:text-[#FCDC00]">
+                          {title}
+                        </h4>
+                        <div className="space-y-1">
+                          {details.map((detail) => (
+                            <p key={detail} className="text-sm text-white/90">
+                              {detail}
+                            </p>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-10 p-6 bg-[#FCDC00]/20 rounded-2xl border border-[#FCDC00]/30">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="font-semibold text-[#FCDC00]">Quick Response</span>
                     </div>
-                    <p className="text-sm text-white/90">
-                      We typically respond to all inquiries within 24 hours. For urgent matters, please call us directly.
-                    </p>
+                  ))}
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-[#FCDC00]/30 bg-[#FCDC00]/20 p-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-400 motion-safe:animate-pulse" />
+                    <span className="font-semibold text-[#FCDC00]">Quick Response</span>
                   </div>
+                  <p className="text-sm text-white/90">
+                    We typically respond within 24 hours. For urgent matters, please call us directly.
+                  </p>
                 </div>
               </div>
             </div>

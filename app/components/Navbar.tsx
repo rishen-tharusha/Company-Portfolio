@@ -3,60 +3,55 @@
 import { useState } from 'react';
 import { MenuIcon, XIcon } from 'lucide-react';
 
+const NAV_LINKS = [
+  { href: '#home', label: 'Home' },
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#portfolio', label: 'Portfolio' },
+  { href: '#contact', label: 'Contact' },
+];
+
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  return <nav className="sticky top-0 z-50 w-full bg-[#1A304F] shadow-md">
+  const closeMenu = () => setIsMenuOpen(false);
+
+  return (
+    <nav className="sticky top-0 z-50 w-full bg-[#1A304F] shadow-md">
       <div className="container flex items-center justify-between px-4 py-4 mx-auto">
-        <div className="flex items-center">
-          <span className="text-2xl font-bold text-white">
-            <span className="text-[#FCDC00]">Hex</span>Coders
-          </span>
-        </div>
-        {/* Desktop Navigation */}
+        <span className="text-2xl font-bold text-white">
+          <span className="text-[#FCDC00]">Hex</span>Coders
+        </span>
+
         <div className="hidden px-10 space-x-8 md:flex">
-          <a href="#home" className="text-white hover:text-[#FCDC00] transition-colors">
-            Home
-          </a>
-          <a href="#about" className="text-white hover:text-[#FCDC00] transition-colors">
-            About
-          </a>
-          <a href="#services" className="text-white hover:text-[#FCDC00] transition-colors">
-            Services
-          </a>
-          <a href="#portfolio" className="text-white hover:text-[#FCDC00] transition-colors">
-            Portfolio
-          </a>
-          <a href="#contact" className="text-white hover:text-[#FCDC00] transition-colors">
-            Contact
-          </a>
+          {NAV_LINKS.map(({ href, label }) => (
+            <a key={href} href={href} className="text-white hover:text-[#FCDC00] transition-colors">
+              {label}
+            </a>
+          ))}
         </div>
-        {/* Mobile Navigation Button */}
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white focus:outline-none">
-            {isMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
-          </button>
-        </div>
+
+        <button
+          className="text-white md:hidden focus:outline-none"
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+        >
+          {isMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
+        </button>
       </div>
-      {/* Mobile Menu */}
-      {isMenuOpen && <div className="md:hidden bg-[#1A304F] py-4">
-          <div className="flex flex-col items-center space-y-4">
-            <a href="#home" className="text-white hover:text-[#FCDC00] transition-colors" onClick={() => setIsMenuOpen(false)}>
-              Home
+
+      {isMenuOpen && (
+        <div className="flex flex-col items-center py-4 space-y-4 md:hidden bg-[#1A304F]">
+          {NAV_LINKS.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="text-white hover:text-[#FCDC00] transition-colors"
+              onClick={closeMenu}
+            >
+              {label}
             </a>
-            <a href="#about" className="text-white hover:text-[#FCDC00] transition-colors" onClick={() => setIsMenuOpen(false)}>
-              About
-            </a>
-            <a href="#services" className="text-white hover:text-[#FCDC00] transition-colors" onClick={() => setIsMenuOpen(false)}>
-              Services
-            </a>
-            <a href="#portfolio" className="text-white hover:text-[#FCDC00] transition-colors" onClick={() => setIsMenuOpen(false)}>
-              Portfolio
-            </a>
-            <a href="#contact" className="text-white hover:text-[#FCDC00] transition-colors" onClick={() => setIsMenuOpen(false)}>
-              Contact
-            </a>
-          </div>
-        </div>}
-    </nav>;
+          ))}
+        </div>
+      )}
+    </nav>
+  );
 };
